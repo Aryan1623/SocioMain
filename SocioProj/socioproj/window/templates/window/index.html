@@ -1,0 +1,332 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Analyzer</title>
+    <style>
+        body {
+          margin: 0;
+          font-family: Arial, sans-serif;
+          background: linear-gradient(135deg, #1c1e22, #3a0ca3);
+          color: #d8b4fe; /* Pretty shade of purple */
+          scroll-behavior: smooth;
+        }
+      
+        /* Navbar Styles */
+        .navbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: #000036; /* Transparent shady black */
+          opacity: 0.8;
+          padding: 10px 20px;
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+        }
+      
+        .navbar a {
+          color: #61dafb; /* Blue color from the text analyzer */
+          text-decoration: none;
+          padding: 10px 20px;
+          font-size: 18px;
+        }
+      
+        .navbar a:hover {
+          background-color: #0f3460;
+          border-radius: 5px;
+        }
+      
+        .menu-toggle {
+          display: none;
+          font-size: 24px;
+          cursor: pointer;
+        }
+      
+        /* Hero Section */
+        .hero {
+          display: flex;
+          flex-direction: column; /* For smaller screens */
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+          height: 60vh;
+          background: linear-gradient(135deg, #3a0ca3, #1c1e22); /* Updated background gradient */
+        }
+      
+        .hero-text {
+          max-width: 80%;
+          text-align: center; /* Center align text for smaller screens */
+        }
+      
+        .hero-text h1 {
+          color: #61dafb; /* Blue color from the text analyzer */
+          font-size: 36px;
+        }
+      
+        .hero-text h2 {
+          color: #d8b4fe; /* Pretty shade of purple */
+          font-size: 24px;
+        }
+      
+        .hero-text p {
+          font-size: 18px;
+          margin: 20px 0;
+        }
+      
+        .hero-buttons {
+          margin-top: 20px;
+          display: flex;
+          flex-direction: column; /* For smaller screens */
+          align-items: center;
+          gap: 10px; /* Add some gap between buttons */
+        }
+      
+        .hero-buttons button {
+          background-color: #61dafb; /* Blue color from the text analyzer */
+          color: #121212;
+          border: none;
+          padding: 10px 20px;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 5px;
+        }
+      
+        .hero-buttons button:hover {
+          background-color: #0f3460;
+          color: #61dafb; /* Blue color from the text analyzer */
+        }
+      
+        .hero img {
+          width: 80%;
+          height: auto;
+          border-radius: 10px;
+          animation: upDown 3s infinite;
+          margin-top: 20px; /* Add margin for spacing */
+        }
+      
+        @keyframes upDown {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+      
+        /* Section Styles */
+        section {
+          padding: 20px;
+          background-color: #1a1a2e;
+          border-top: 1px solid #333;
+        }
+      
+        section h2 {
+          font-size: 28px;
+          margin-bottom: 20px;
+          color: #61dafb; /* Blue color from the text analyzer */
+        }
+      
+        section p {
+          font-size: 18px;
+          margin-bottom: 20px;
+        }
+      
+        /* Slide-up animation */
+        @keyframes slideUp {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+      
+        /* Initially hide sections */
+        section {
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+      
+        /* Class to add slide-up animation */
+        section.show {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      
+        .features, .help, .about, .ask-ai {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      
+        .features p, .help p, .about p, .ask-ai p {
+          max-width: 600px;
+        }
+      
+        .additional-info {
+          font-size: 16px;
+          color: #d8b4fe; /* Pretty shade of purple */
+        }
+      
+        /* Navigate Up Button */
+        .navigate-up {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background-color: #61dafb; /* Blue color from the text analyzer */
+          color: #121212;
+          border: none;
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          font-size: 24px;
+          text-align: center;
+          line-height: 50px;
+          cursor: pointer;
+        }
+      
+        .navigate-up:hover {
+          background-color: #0f3460;
+          color: #61dafb; /* Blue color from the text analyzer */
+        }
+      
+        /* Media Queries */
+        @media (max-width: 767px) {
+          .navbar a {
+            display: none; /* Hide navbar links on small screens */
+          }
+      
+          .menu-toggle {
+            display: block;
+          }
+      
+          .hero {
+            padding: 20px;
+            height: auto; /* Adjust hero section height */
+          }
+      
+          .hero img {
+            width: 100%; /* Adjust image width to hero section width */
+            margin-top: 20px;
+            height: 400px;
+          }
+          section{
+            height: 80vh;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          .hero {
+            flex-direction: row; /* Change back to row for larger screens */
+            justify-content: space-between;
+            height: 80vh;
+          }
+      
+          .hero-text {
+            max-width: 50%;
+            text-align: left; /* Align text to left for larger screens */
+          }
+      
+          .hero-buttons {
+            flex-direction: row; /* Change back to row for larger screens */
+            gap: 10px;
+          }
+      
+          .hero img {
+            width: 400px;
+            height: 250px;
+            margin-top: 0; /* Remove margin for larger screens */
+          }
+          section{
+            height: 80vh;
+          }
+        }
+      </style>
+      
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h1>404 Found</h1>
+        <div>
+            <a href="#features">Features</a>
+            <a href="#help">Help</a>
+            <a href="#about">About Us</a>
+            <a href="/chat/">Ask AI</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-text">
+            <h1>Make Your Social Media Analysis Easy</h1>
+            <h2>with AI</h2>
+            <p>Our AI tool provides assistance in your social media analysis to enhance your insights and performance.</p>
+            <div class="hero-buttons">
+                <a href="chat">
+                <button>Chat</button>
+                <a>
+                <button onclick="location.href='https://www.youtube.com/demo'">YT Demo</button>
+            </div>
+        </div>
+        
+        <img src="{% static 'images/graphimg.png' %}" alt="Social Media Analysis">
+        
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2>Features</h2>
+        <p>Explore the powerful features of our Social Media Analyzer to enhance your social insights.</p>
+        <p class="additional-info">Our features include detailed analytics, performance metrics, trend analysis, and more. Leverage these tools to optimize your social media strategy and achieve better results.</p>
+    </section>
+
+    <!-- Help Section -->
+    <section id="help" class="help">
+        <h2>Help</h2>
+        <p>Need help? Find answers to frequently asked questions or reach out to us for support.</p>
+        <p class="additional-info">Our support team is available 24/7 to assist you with any issues or questions you may have. Check our FAQ section for quick answers or contact us directly for more personalized support.</p>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="about">
+        <h2>About Us</h2>
+        <p>Learn more about our mission, vision, and the team behind Social Media Analyzer.</p>
+        <p class="additional-info">We are dedicated to providing the best tools and insights for social media analysis. Our team consists of industry experts with a passion for helping businesses succeed in the digital landscape.</p>
+    </section>
+
+    <!-- Navigate Up Button -->
+    <button class="navigate-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">&#8679;</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section');
+
+            const options = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, options);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+
+</body>
+</html>

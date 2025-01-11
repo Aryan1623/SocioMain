@@ -1,0 +1,421 @@
+{%csrf_token%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Langflow Integration</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1c1e22, #3a0ca3);
+            color: #d8b4fe;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column; /* Change to column for smaller screens */
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar h1 {
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .sidebar .section {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .section h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #61dafb;
+        }
+
+        .section p, .section ul li {
+            color: #d8b4fe;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+        }
+
+        .status .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            color: #61dafb;
+        }
+
+        .settings-icon {
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .chat-box {
+            flex: 1;
+            background-color: #282c34;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #5865f2;
+            color: #ffffff;
+            align-self: flex-end;
+        }
+
+        .bot-message {
+            background-color: #333740;
+            color: #ffffff;
+            align-self: flex-start;
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: #333740;
+        }
+
+        .footer input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #333740;
+            color: #d8b4fe;
+        }
+
+        #sendButton {
+            background-color: #61dafb;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #121212;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #sendButton:hover {
+            background-color: #0f3460;
+            color: #61dafb;
+        }
+
+        #voicebutton {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            background-color: #5865f2;
+        }
+
+        #voicebutton:hover {
+            background-color: #4752c4;
+        }
+
+        #voicebutton::after {
+            content: 'Use to give voice input';
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333740;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            white-space: nowrap;
+        }
+
+        #voicebutton:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .typing-animation {
+            display: flex;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #5865f2;
+            border-radius: 50%;
+            animation: blink 1.4s infinite both;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 80%, 100% {
+                opacity: 0;
+            }
+            40% {
+                opacity: 1;
+            }
+        }
+
+        .response-button {
+            background-color: #61dafb;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #121212;
+            cursor: pointer;
+            font-size: 16px;
+            width: fit-content;
+        }
+
+        .response-button:hover {
+            background-color: #0f3460;
+            color: #61dafb;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row; /* Change back to row for larger screens */
+            }
+
+            .sidebar {
+                width: 25%;
+            }
+
+            .main-content {
+                flex: 1;
+            }
+        }
+        .view-chart-button{
+            background-color: #61dafb;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #121212;
+            cursor: pointer;
+            font-size: 16px;
+            width: fit-content;
+        }
+        .view-chart-button:hover {
+            background-color: #0f3460;
+            color: #61dafb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div>
+                <h1>AI Chatbot</h1>
+                <div class="section">
+                    <h2>About</h2>
+                    <p>I am an advanced chatbot interface template for Langflow.</p>
+                </div>
+                <div class="section">
+                    <h2>Guide</h2>
+                    <ul>
+                        <li>Ask detailed questions about your data.</li>
+                        <li>Receive both descriptive and analytical responses.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="status">
+                <div class="dot"></div>
+                <span>System Online</span>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Socio GPT</h1>
+                <span class="settings-icon">⚙️</span>
+            </div>
+            <div class="chat-box" id="chatBox"></div>
+            <div class="footer">
+                <input type="text" id="userInput" placeholder="Ask about your analytics..." />
+                <div id="voicebutton" onclick="startVoiceRecognition()"><i class="fa-solid fa-microphone"></i></div>
+                <button id="sendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chatBox');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        
+        function addMessage(text, isUser, showButton = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', isUser ? 'user-message' : 'bot-message');
+            messageDiv.textContent = text;
+        
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        
+            if (showButton) {
+                const button = document.createElement('button');
+                button.textContent = 'View Graphical Representation ->';
+                button.classList.add('view-chart-button');
+                button.onclick = () => {
+                    localStorage.setItem('userInput', text);
+                    window.location.href = '/graphs/';
+                };
+                // Append the button to the chatBox directly after the messageDiv
+                chatBox.appendChild(button);
+            }
+        }
+        
+        function showTypingAnimation() {
+            const typingDiv = document.createElement('div');
+            typingDiv.classList.add('message', 'bot-message', 'typing-animation');
+            typingDiv.innerHTML = `<span class="dot"></span><span class="dot"></span><span class="dot"></span>`;
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return typingDiv;
+        }
+        
+        async function sendMessage() {
+            const inputValue = userInput.value.trim();
+            if (!inputValue) return;
+        
+            // Add user message to the chat box
+            addMessage(inputValue, true);
+        
+            // Clear input field
+            userInput.value = '';
+        
+            // Show typing animation
+            const typingDiv = showTypingAnimation();
+        
+            // Fetch CSRF token
+            const csrfToken = "{{ csrf_token }}";
+        
+            try {
+                // Send POST request to the server
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({ input_value: inputValue }),
+                });
+        
+                if (response.ok) {
+                    const data = await response.json();
+                    typingDiv.remove();
+        
+                    // Add bot response with a button below
+                    addMessage(data.output, false, true);
+                } else {
+                    typingDiv.remove();
+                    addMessage("Error: Unable to process your request. Please try again.", false);
+                }
+            } catch (error) {
+                typingDiv.remove();
+                addMessage("Error: Unable to connect to the server. Please try again later.", false);
+            }
+        }
+        
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        function startVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Voice recognition is not supported in this browser.");
+                return;
+            }
+        
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+        
+            recognition.start();
+        
+            recognition.onresult = function (event) {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript; // Populate the input field with the voice transcription
+            };
+        
+            recognition.onerror = function (event) {
+                console.error("Voice recognition error:", event);
+            };
+        }
+        
+
+
+
+    </script>
+</body>
+</html>
+    
+
+
+
